@@ -6,6 +6,7 @@ fn main() {
     loop {
         let mut input_text: String = String::new();
         let mut decider: String = String::new();
+        let mut mode: String = String::new();
         let mut key: String = String::new();
         let mut recursion: String = String::new();    
 
@@ -18,6 +19,11 @@ fn main() {
         println!("Encrypt | Decrypt");
         io::stdin()
             .read_line(&mut decider)
+            .expect("Couldn't read line");
+
+        println!("Default | ASCII");
+        io::stdin()
+            .read_line(&mut mode)
             .expect("Couldn't read line");
 
         println!("Key");
@@ -43,14 +49,28 @@ fn main() {
 
         println!("Decider: {}", decider.to_lowercase().as_str());
 
-        match decider.trim().to_lowercase().as_str() {
-            "encrypt" => encrypt(&input_text.trim().to_string().to_uppercase(), key, recursion),
-            "decrypt" => decrypt(&input_text.trim().to_string().to_uppercase(), key, recursion),
+        match mode.trim().to_lowercase().as_str(){
+            "default" => match decider.trim().to_lowercase().as_str() {
+                "encrypt" => encrypt(&input_text.trim().to_string().to_uppercase(), key, recursion),
+                "decrypt" => decrypt(&input_text.trim().to_string().to_uppercase(), key, recursion),
+                _ => {
+                    println!("Please use either 'Encrypt' or 'Decrypt'");
+                    continue;
+                }
+            },
+            "ascii" => match decider.trim().to_lowercase().as_str() {
+                "encrypt" => ascii_encrypt(&input_text.trim().to_string(), key.try_into().unwrap(), recursion),
+                "decrypt" => decrypt(&input_text.trim().to_string(), key, recursion),
+                _ => {
+                    println!("Please use either 'Encrypt' or 'Decrypt'");
+                    continue;
+                }
+            }
             _ => {
-                println!("Please use either 'Encrypt' or 'Decrypt'");
+                println!("Please use either 'Default' or 'ASCII'");
                 continue;
             }
-        };
+        }
     }
 }
 
@@ -280,4 +300,41 @@ fn decrypt(text: &String, subtraction_key: i32, recursion: i32){
 
     println!("OUTPUT: {}", decrypt_text);
 
+}
+
+fn ascii_encrypt(text: &String, addition_key: u32, recursion: i32){
+    let mut encrypt_text: String = text.clone();
+    let mut decimal_out: Vec<u32> = Vec::new();
+
+    println!("Encrypt Text: {}", encrypt_text);
+
+    for _i in 0..recursion{
+        for j in 0..encrypt_text.len(){
+            let out_num: char = match encrypt_text.chars().nth(j) {
+                Some(char) => char,
+                None => {
+                    println!("Cannot get character at {}", j);
+                    break;
+                }
+            };
+
+            println!("Out Character: {}", out_num);
+
+            let out_num: u32 = out_num as u8 as u32;
+
+            println!("Out Number: {}", out_num);
+
+            decimal_out.push(out_num + addition_key);
+        }
+
+        encrypt_text.clear();
+
+        for j in 0..decimal_out.len(){
+            encrypt_text.push_str(format!("{:x}", decimal_out[j]).to_uppercase().as_str());
+        }
+
+        decimal_out.clear();
+    }
+
+    println!("OUTPUT: {}", encrypt_text);
 }
