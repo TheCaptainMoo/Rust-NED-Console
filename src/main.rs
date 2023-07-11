@@ -60,7 +60,7 @@ fn main() {
             },
             "ascii" => match decider.trim().to_lowercase().as_str() {
                 "encrypt" => ascii_encrypt(&input_text.trim().to_string(), key.try_into().unwrap(), recursion),
-                "decrypt" => decrypt(&input_text.trim().to_string(), key, recursion),
+                "decrypt" => ascii_decrypt(&input_text.trim().to_string(), key.try_into().unwrap(), recursion),
                 _ => {
                     println!("Please use either 'Encrypt' or 'Decrypt'");
                     continue;
@@ -337,4 +337,49 @@ fn ascii_encrypt(text: &String, addition_key: u32, recursion: i32){
     }
 
     println!("OUTPUT: {}", encrypt_text);
+}
+
+fn ascii_decrypt(text: &String, subtraction_key: u32, recursion: i32){
+    let mut decrypt_text: String = text.clone();
+    let mut joined: Vec<String> = Vec::new();
+    let mut hex: Vec<i32> = Vec::new();
+
+    for _i in 0..recursion{
+        let mut j:usize = 0;
+
+        while j < decrypt_text.len(){
+            joined.push(decrypt_text[j..j+2].try_into().unwrap());
+
+            println!("Joined: {} | Index: {}", joined[j/2], j);
+
+            j += 2;
+        }
+        
+        decrypt_text.clear();
+        
+        for j in 0..joined.len(){
+            hex.push(match i32::from_str_radix(joined[j].trim(), 16) {
+                Ok(num) => num,
+                Err(_) => {
+                    println!("Invalid Hex Value");
+                    break;
+                }
+            } - subtraction_key as i32);
+        }
+
+        for j in 0..hex.len(){
+            decrypt_text.push(match char::from_u32(hex[j].try_into().unwrap()){
+                Some(character) => character,
+                None => {
+                    println!("Invalid Decimal Value");
+                    break;
+                }
+            });
+        }
+
+        hex.clear();
+        joined.clear();
+    }
+
+    println!("OUTPUT: {}", decrypt_text);
 }
