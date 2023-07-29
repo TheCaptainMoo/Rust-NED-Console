@@ -20,7 +20,9 @@ No runtime is required for this version of NED.
 - Run the NED executable
 - Have fun :D
 
+### Using NED CLI
+For a basic overview of the NED CLI use ```[NED_PATH] -help``` in the command line. 
+
 ## Planned Updates
-- CLI Tools
 - File IO
 - Password Encryption
