@@ -315,3 +315,80 @@ pub fn ascii_decrypt(text: &String, subtraction_key: u32, recursion: i32) -> Str
     decrypt_text
 
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::encryption::{encrypt, decrypt, ascii_decrypt, ascii_encrypt};
+
+    #[test]
+    fn encrypt_default_1(){
+        assert_eq!(encrypt(&"Hello".trim().to_string().to_uppercase(), 53, 3), "FIGCFIFGFIGBFJFDFIGCFIGAFIGCFIGAFIGCFJFD");
+    }
+
+    #[test]
+    fn encrypt_default_2(){
+        assert_eq!(encrypt(&"alphabet!".trim().to_string().to_uppercase(), 24, 2), "CGCICHCJCHDDCHCFCGCICGCJCGDCCICH!");
+    }
+
+    #[test]
+    fn encrypt_default_3(){
+        assert_eq!(encrypt(&"code_!s_co0l".trim().to_string().to_uppercase(), 63, 4), "GJHCHAGFGJHCHAGEHAGDGJGGHAGDGJGGGJHCHAGFGJHCHAGFGJHCHAGFHAGDGJGG_!HAGDGJGHGJHCGJHA_GJHCHAGFGJHCHAGEHAGDGJGGHAGDGJGG0HAGDGJGGGJHCHAGD");
+    }
+
+    #[test]
+    fn decrypt_default_1(){
+        assert_eq!(decrypt(&"GDGC GDGFGEFIGEGFGDFI GCGGGEFIGDFHGDFI".trim().to_string().to_uppercase(), 57, 2), "I LOVE CODE");
+    }
+
+    #[test]
+    fn decrypt_default_2(){
+        assert_eq!(decrypt(&"FCEIFCFDFCFAFBFFFCEJFBFEFCEJFBFF !FCFAFCEJ FCEIFCFD00FCEJFCFC!".trim().to_string().to_uppercase(), 47, 3), "CODE !S C00L!");
+    }
+
+    #[test]
+    fn decrypt_default_3(){
+        assert_eq!(decrypt(&"BHCB0BICBBGCE_BIBHBICABIBIBIBJ".trim().to_string().to_uppercase(), 15, 2), "L0VE_RUST");
+    }
+
+    #[test]
+    fn joint_default(){
+        let text = encrypt(&"encrypt".trim().to_string().to_uppercase(), 30, 5);
+        assert_eq!("ENCRYPT", decrypt(&text, 30, 5));
+    }
+
+    #[test]
+    fn encrypt_ascii_1(){
+        assert_eq!(ascii_encrypt(&"Hello".trim().to_string(), 53, 3), "6B786C6E6B7A6C6B6C6B6B6B6C6B6B6B6C6B6B6E");
+    }
+
+    #[test]
+    fn encrypt_ascii_2(){
+        assert_eq!(ascii_encrypt(&"alphabet!".trim().to_string(), 24, 2), "4F51504C505050484F514F594F5C505B4B51");
+    }
+
+    #[test]
+    fn encrypt_ascii_3(){
+        assert_eq!(ascii_encrypt(&"code_!s_co0l".trim().to_string(), 63, 4), "767675857675766F767675857676767276767585767576707676758576757671767576767676767276757673767477747676766F7675766F7675767676767672767675857675766F76767585767676727675767376767673767675857676766F");
+    }
+
+    #[test]
+    fn decrypt_ascii_1(){
+        assert_eq!(ascii_decrypt(&"716B6E727A6E7A717A7F727E6E72727C7A71727D727E".trim().to_string(), 57, 2), "I love code");
+    }
+
+    #[test]
+    fn decrypt_ascii_2(){
+        assert_eq!(ascii_decrypt(&"656765606565666365676561656565626562666465636475665F6560656266646565656065636664656366646565666065636475".trim().to_string(), 47, 3), "cOdE !s C00L!");
+    }
+
+    #[test]
+    fn decrypt_ascii_3(){
+        assert_eq!(ascii_decrypt(&"465142554744464345544740454347414742".trim().to_string(), 15, 2), "l0ve_rUst");
+    }
+
+    #[test]
+    fn joint_ascii(){
+        let text = ascii_encrypt(&"decryption!".trim().to_string(), 30, 5);
+        assert_eq!("decryption!", ascii_decrypt(&text, 30, 5));
+    }
+}
